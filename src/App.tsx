@@ -500,13 +500,13 @@ function App() {
         <div className="container mx-auto px-4">
           <div className="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-3 gap-8">
             <div>
-              <h3 className="text-xl font-bold mb-4 flex items-center"><svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2"><path strokeLinecap="round" strokeLinejoin="round" d="M13 16V9m-4 7V9m10 8V5a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2h14a2 2 0 002-2z" /></svg>About the Contest</h3>
+              <h3 className="text-xl font-bold mb-4 flex items-center"><svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2"><path strokeLinecap="round" strokeLinejoin="round" d="M13 16V9m-4 7V9m10 8V5a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2h14a2 2 0 002-2z" /></svg>About Studykey.ca</h3>
               <p className="text-gray-400">Experience the magic of Disney World with this exclusive giveaway opportunity. ✨</p>
             </div>
             <div>
               <h3 className="text-xl font-bold mb-4 flex items-center"><svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2"><path strokeLinecap="round" strokeLinejoin="round" d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.102 1.101m-.757 4.898l-4 4v.001" /></svg>Quick Links</h3>
               <ul className="space-y-2 text-gray-400">
-                <li><a href="#" className="hover:text-white transition-colors flex items-center"><span className="mr-2">•</span>Terms & Conditions 📜</a></li>
+                <li><a href="https://studykey.ca" className="hover:text-white transition-colors flex items-center"><span className="mr-2">•</span>Visit Studykey.ca 🌎</a></li>
                 <li><a href="#" className="hover:text-white transition-colors flex items-center"><span className="mr-2">•</span>Privacy Policy 🔒</a></li>
                 <li><a href="#" className="hover:text-white transition-colors flex items-center"><span className="mr-2">•</span>Contact Us 📞</a></li>
               </ul>
@@ -514,7 +514,7 @@ function App() {
             <div>
               <h3 className="text-xl font-bold mb-4 flex items-center"><svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2"><path strokeLinecap="round" strokeLinejoin="round" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684L10 9l-2 2m0 0l2 2m-2-2l-2 2m2-2h4m3 0h3M10 13l2 2m0 0l2 2m-2-2v4m-4-4l-1 1M14 10l-1 1" /></svg>Contact 📧</h3>
               <ul className="space-y-2 text-gray-400">
-                <li>Email: support@disneygiveaway.com</li>
+                <li>Email: support@studykey.ca</li>
                 <li>Phone: (555) 123-4567</li>
               </ul>
             </div>
