@@ -425,19 +425,19 @@ function App() {
                     <svg className="w-5 h-5 text-blue-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7"></path>
                     </svg>
-                    <span>4 Disney World Park Hopper Tickets</span>
+                    <span>2 adult tickets & 2 kids tickets</span>
                   </li>
                   <li className="flex items-center space-x-3">
                     <svg className="w-5 h-5 text-blue-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7"></path>
                     </svg>
-                    <span>3-Night Stay at a Disney Resort Hotel</span>
+                    <span>Winner can choose if they want Walt Disney World Resort Tickets in Florida</span>
                   </li>
                   <li className="flex items-center space-x-3">
                     <svg className="w-5 h-5 text-blue-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7"></path>
                     </svg>
-                    <span>$500 Disney Gift Card</span>
+                    <span>Or Disneyland Park tickets in California</span>
                   </li>
                 </ul>
               </div>
@@ -479,14 +479,10 @@ function App() {
                 </li>
                 <li className="flex items-start space-x-3">
                   <span className="text-blue-600 font-bold">3.</span>
-                  <span>Contest ends on December 31, 2025 🗓️</span>
+                  <span>Winner will be notified via email and social media @studykey_official 📧</span>
                 </li>
                 <li className="flex items-start space-x-3">
                   <span className="text-blue-600 font-bold">4.</span>
-                  <span>Winner will be notified via email 📧</span>
-                </li>
-                <li className="flex items-start space-x-3">
-                  <span className="text-blue-600 font-bold">5.</span>
                   <span>Prize must be claimed within 30 days of winning 🏆</span>
                 </li>
               </ul>
