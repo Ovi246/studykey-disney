@@ -7,7 +7,7 @@ interface FormErrors {
   fullName?: string;
   email?: string;
   phoneNumber?: string;
-  reviewScreenshot?: string;
+  // reviewScreenshot?: string; // Commented out
 }
 
 // Add this interface for error types
@@ -20,7 +20,7 @@ interface ApiError {
 interface ApiResponse {
   success: boolean;
   error?: ApiError;
-  data?: any;
+  data?: Record<string, unknown>; // Changed from any to be more specific
 }
 
 function App() {
@@ -30,7 +30,7 @@ function App() {
   const [fullName, setFullName] = useState('');
   const [email, setEmail] = useState('');
   const [phoneNumber, setPhoneNumber] = useState('');
-  const [reviewScreenshot, setReviewScreenshot] = useState<File | null>(null);
+  // const [reviewScreenshot, setReviewScreenshot] = useState<File | null>(null); // Commented out
   const [errors, setErrors] = useState<FormErrors>({});
   const [isLoading, setIsLoading] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -73,14 +73,8 @@ function App() {
   };
 
   const validatePage2 = (): boolean => {
-    const newErrors: FormErrors = {};
-
-    if (!reviewScreenshot) {
-      newErrors.reviewScreenshot = 'Review screenshot is required';
-    }
-
-    setErrors(newErrors);
-    return Object.keys(newErrors).length === 0;
+    // No validation needed for page 2 since we removed the screenshot requirement
+    return true;
   };
 
   const handlePage1Submit = async (e: FormEvent<HTMLFormElement>) => {
@@ -93,7 +87,7 @@ function App() {
     setIsLoading(true);
     try {
       // Replace with your actual API endpoint
-      const response = await axios.post('https://studykey-third-server.vercel.app/validate-order-id', {
+      const response = await axios.post('https://studykey-third-server.app/validate-order-id', {
         orderId,
       });
 
@@ -113,7 +107,7 @@ function App() {
 
   // Add this function to show errors
   const showError = (message: string) => {
-    setErrors({ reviewScreenshot: message });
+    setErrors({ orderId: message }); // Changed from reviewScreenshot to orderId since we removed that field
   };
 
   const handlePage2Submit = async (e: FormEvent<HTMLFormElement>) => {
@@ -126,14 +120,14 @@ function App() {
     setIsSubmitting(true);
     try {
       const formData = new FormData();
-      formData.append('reviewScreenshot', reviewScreenshot as File);
+      // formData.append('reviewScreenshot', reviewScreenshot as File); // Commented out
       formData.append('orderId', orderId);
       formData.append('asin', asin as string);
       formData.append('name', fullName);
       formData.append('email', email);
       formData.append('phoneNumber', phoneNumber);
 
-      const { data } = await axios.post<ApiResponse>('https://studykey-third-server.vercel.app/claim-ticket', formData, {
+      const { data } = await axios.post<ApiResponse>('https://studykey-third-server.app/claim-ticket', formData, {
         headers: {
           'Content-Type': 'multipart/form-data',
         },
@@ -160,7 +154,7 @@ function App() {
       }
 
       // Success case
-      alert('Your review and entry have been submitted successfully!');
+      alert('Your entry has been submitted successfully!');
       // Reset form
       setCurrentPage(1);
       setOrderId('');
@@ -168,7 +162,7 @@ function App() {
       setEmail('');
       setPhoneNumber('');
       setAsin(null);
-      setReviewScreenshot(null);
+      // setReviewScreenshot(null); // Commented out
       setErrors({});
 
     } catch (error) {
@@ -201,21 +195,21 @@ function App() {
     }
   };
 
-  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (file) {
-      if (file.size > 5 * 1024 * 1024) { // 5MB limit
-        setErrors({ reviewScreenshot: 'File size should be less than 5MB' });
-        return;
-      }
-      if (!file.type.startsWith('image/')) {
-        setErrors({ reviewScreenshot: 'Please upload an image file' });
-        return;
-      }
-      setReviewScreenshot(file);
-      setErrors({ ...errors, reviewScreenshot: undefined });
-    }
-  };
+  // const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => { // Commented out entire function
+  //   const file = e.target.files?.[0];
+  //   if (file) {
+  //     if (file.size > 5 * 1024 * 1024) { // 5MB limit
+  //       setErrors({ reviewScreenshot: 'File size should be less than 5MB' });
+  //       return;
+  //     }
+  //     if (!file.type.startsWith('image/')) {
+  //       setErrors({ reviewScreenshot: 'Please upload an image file' });
+  //       return;
+  //     }
+  //     setReviewScreenshot(file);
+  //     setErrors({ ...errors, reviewScreenshot: undefined });
+  //   }
+  // };
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -344,37 +338,13 @@ function App() {
                 }`}
               >
                 <div className="text-center space-y-2">
-                  <h2 className="text-3xl font-bold text-gray-800">Upload Your Review & Submit! 📸</h2>
-                  <p className="text-gray-600">Please upload a screenshot of your review and finalize your entry. ✨</p>
+                  <h2 className="text-3xl font-bold text-gray-800">Almost Done! 🎉</h2>
+                  <p className="text-gray-600">We'd love to get your honest feedback to help us improve our product for toddlers like yours! ✨</p>
                 </div>
                 <div className="space-y-4">
-                  <div>
-                    <label htmlFor="reviewScreenshot" className="block text-gray-700 text-sm font-bold mb-2">
-                      Review Screenshot*
-                    </label>
-                    <input
-                      type="file"
-                      id="reviewScreenshot"
-                      className={`w-full p-3 rounded-lg border ${
-                        errors.reviewScreenshot ? 'border-red-500' : 'border-gray-300'
-                      } focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition-all`}
-                      accept="image/*"
-                      onChange={handleFileChange}
-                      required
-                    />
-                    {errors.reviewScreenshot && (
-                      <p className="mt-1 text-sm text-red-500">{errors.reviewScreenshot}</p>
-                    )}
-                    {reviewScreenshot && (
-                      <p className="mt-2 text-sm text-gray-600">
-                        Selected file: {reviewScreenshot.name} ({(reviewScreenshot.size / 1024 / 1024).toFixed(2)}MB)
-                      </p>
-                    )}
-                  </div>
-
-                  <div className="bg-yellow-50 p-4 rounded-lg text-yellow-800">
-                    <p className="font-semibold mb-2">Review Hint:</p>
-                    <p className="text-sm">Make sure your review is visible to the public on Amazon. Your order ID must match a valid review to be eligible for the giveaway. Please include details about your experience to help others!</p>
+                  <div className="bg-blue-50 p-4 rounded-lg text-blue-800">
+                    <p className="font-semibold mb-2">💝 Your Feedback Matters:</p>
+                    <p className="text-sm">We would love to get your honest feedback! You will be helping us improve our product for toddlers like yours!</p>
                   </div>
 
                   {asin && (
@@ -390,6 +360,11 @@ function App() {
                       Share Review on Amazon
                     </a>
                   )}
+
+                  <div className="bg-green-50 p-4 rounded-lg text-green-800">
+                    <p className="font-semibold mb-2">✅ Ready to Submit:</p>
+                    <p className="text-sm">Click the button below to finalize your entry into the Disney World giveaway!</p>
+                  </div>
 
                   <button
                     type="submit"
