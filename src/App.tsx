@@ -87,7 +87,7 @@ function App() {
     setIsLoading(true);
     try {
       // Replace with your actual API endpoint
-      const response = await axios.post('https://studykey-third-server.app/validate-order-id', {
+      const response = await axios.post('https://studykey-third-server.vercel.app/validate-order-id', {
         orderId,
       });
 
@@ -127,7 +127,7 @@ function App() {
       formData.append('email', email);
       formData.append('phoneNumber', phoneNumber);
 
-      const { data } = await axios.post<ApiResponse>('https://studykey-third-server.app/claim-ticket', formData, {
+      const { data } = await axios.post<ApiResponse>('https://studykey-third-server.vercel.app/claim-ticket', formData, {
         headers: {
           'Content-Type': 'multipart/form-data',
         },
