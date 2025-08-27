@@ -220,11 +220,14 @@ function App() {
   return (
     <div className="min-h-screen bg-gray-50">
       {/* Hero Section */}
-      <section className="relative min-h-[600px] bg-[url('https://images6.alphacoders.com/404/404692.jpg')] bg-cover bg-center rounded-b-xl overflow-hidden"> {/* Added rounded-b-xl */}
+      <section className="relative min-h-[600px] bg-[url('https://images6.alphacoders.com/404/404692.jpg')] bg-cover bg-center rounded-b-xl overflow-hidden">
+        {" "}
+        {/* Added rounded-b-xl */}
         <div className="absolute inset-0 bg-gradient-to-b from-black/70 to-black/50"></div>
         <div className="relative container mx-auto px-4 py-16">
           <div className="flex flex-col items-center justify-center text-center text-white space-y-6">
-            <img src={Logo} className="w-50 h-auto rounded-lg shadow-lg"></img> {/* Added styling to image */}
+            <img src={Logo} className="w-50 h-auto rounded-lg shadow-lg"></img>{" "}
+            {/* Added styling to image */}
             <h1 className="text-5xl md:text-6xl font-bold tracking-tight">
               Win Disney World Tickets! ✨
             </h1>
@@ -232,7 +235,9 @@ function App() {
               Enter to win an unforgettable trip to the most magical place on
               earth! 🏰
             </p>
-            <button className="bg-blue-600 hover:bg-blue-700 text-white px-8 py-3 rounded-full text-lg font-semibold transition-all duration-300 transform hover:scale-105 shadow-lg"> {/* Rounded button */}
+            <button className="bg-blue-600 hover:bg-blue-700 text-white px-8 py-3 rounded-full text-lg font-semibold transition-all duration-300 transform hover:scale-105 shadow-lg">
+              {" "}
+              {/* Rounded button */}
               Limited Time Offer 🎟️
             </button>
           </div>
@@ -258,7 +263,9 @@ function App() {
                     Fill out the form below to enter the giveaway. 👇
                   </p>
                 </div>
-                <div className="bg-blue-50 p-4 rounded-lg flex items-center shadow-inner"> {/* Added shadow-inner */}
+                <div className="bg-blue-50 p-4 rounded-lg flex items-center shadow-inner">
+                  {" "}
+                  {/* Added shadow-inner */}
                   <span className="text-blue-800 font-semibold mr-2">
                     💡 Demo Form:
                   </span>
@@ -267,38 +274,41 @@ function App() {
                   </span>
                 </div>
                 <div className="space-y-4">
-                  <div className='relative'>
-                    {isLoadingOrderIdValidation && <div className="absolute top-4 right-5 flex items-center justify-center">
-                      <svg
-                        className="animate-spin -ml-1 mr-3 h-5 w-5 text-blue-500"
-                        xmlns="http://www.w3.org/2000/svg"
-                        fill="none"
-                        viewBox="0 0 24 24"
-                      >
-                        <circle
-                          className="opacity-25"
-                          cx="12"
-                          cy="12"
-                          r="10"
-                          stroke="currentColor"
-                          strokeWidth="4"
-                        ></circle>
-                        <path
-                          className="opacity-75"
-                          fill="currentColor"
-                          d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                      </svg>
-                    </div>}
+                  <div className="relative">
+                    {isLoadingOrderIdValidation && (
+                      <div className="absolute top-4 right-5 flex items-center justify-center">
+                        <svg
+                          className="animate-spin -ml-1 mr-3 h-5 w-5 text-blue-500"
+                          xmlns="http://www.w3.org/2000/svg"
+                          fill="none"
+                          viewBox="0 0 24 24"
+                        >
+                          <circle
+                            className="opacity-25"
+                            cx="12"
+                            cy="12"
+                            r="10"
+                            stroke="currentColor"
+                            strokeWidth="4"
+                          ></circle>
+                          <path
+                            className="opacity-75"
+                            fill="currentColor"
+                            d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+                          ></path>
+                        </svg>
+                      </div>
+                    )}
                     <input
                       type="text"
                       className={`w-full p-3 rounded-lg border ${
                         errors.orderId ? "border-red-500" : "border-gray-300"
-                      } focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition-all shadow-sm`} 
+                      } focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition-all shadow-sm`}
                       placeholder={"Order Number*"}
                       value={orderId}
                       onChange={(e) => {
                         setOrderId(e.target.value);
-                        setErrors(prev => ({ ...prev, orderId: undefined }));
+                        setErrors((prev) => ({ ...prev, orderId: undefined }));
                         // Reset ASIN when orderId changes, so it needs re-validation
                         setAsin(null);
                       }}
@@ -322,7 +332,7 @@ function App() {
                       value={fullName}
                       onChange={(e) => {
                         setFullName(e.target.value);
-                        setErrors(prev => ({ ...prev, fullName: undefined }));
+                        setErrors((prev) => ({ ...prev, fullName: undefined }));
                       }}
                       required
                     />
@@ -343,7 +353,7 @@ function App() {
                       value={email}
                       onChange={(e) => {
                         setEmail(e.target.value);
-                        setErrors(prev => ({ ...prev, email: undefined }));
+                        setErrors((prev) => ({ ...prev, email: undefined }));
                       }}
                       required
                     />
@@ -366,7 +376,10 @@ function App() {
                       value={phoneNumber}
                       onChange={(e) => {
                         setPhoneNumber(e.target.value);
-                        setErrors(prev => ({ ...prev, phoneNumber: undefined }));
+                        setErrors((prev) => ({
+                          ...prev,
+                          phoneNumber: undefined,
+                        }));
                       }}
                       required
                     />
@@ -380,16 +393,39 @@ function App() {
                   <button
                     type="submit"
                     // Disable if ASIN is null, or if either API call is in progress
-                    disabled={asin === null || isLoadingOrderIdValidation || isSubmittingForm}
-                    className={`w-full bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-lg text-lg font-semibold transition-all duration-300 transform hover:scale-[1.02] shadow-md ${ /* Added shadow-md */
-                      (isLoadingOrderIdValidation || isSubmittingForm) ? "opacity-50 cursor-not-allowed" : ""
+                    disabled={
+                      asin === null ||
+                      isLoadingOrderIdValidation ||
+                      isSubmittingForm
+                    }
+                    className={`w-full bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-lg text-lg font-semibold transition-all duration-300 transform hover:scale-[1.02] shadow-md ${
+                      /* Added shadow-md */
+                      isLoadingOrderIdValidation || isSubmittingForm
+                        ? "opacity-50 cursor-not-allowed"
+                        : ""
                     }`}
                   >
                     {isSubmittingForm ? (
                       <span className="flex items-center justify-center">
-                        <svg className="animate-spin -ml-1 mr-3 h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                          <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-                          <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                        <svg
+                          className="animate-spin -ml-1 mr-3 h-5 w-5 text-white"
+                          xmlns="http://www.w3.org/2000/svg"
+                          fill="none"
+                          viewBox="0 0 24 24"
+                        >
+                          <circle
+                            className="opacity-25"
+                            cx="12"
+                            cy="12"
+                            r="10"
+                            stroke="currentColor"
+                            strokeWidth="4"
+                          ></circle>
+                          <path
+                            className="opacity-75"
+                            fill="currentColor"
+                            d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+                          ></path>
                         </svg>
                         Submitting...
                       </span>
@@ -443,7 +479,7 @@ function App() {
                         d="M5 13l4 4L19 7"
                       ></path>
                     </svg>
-                    <span>4 Disney World Park Hopper Tickets</span>
+                    <span>2 Adult Tickets & 2 Child Tickets</span>
                   </li>
                   <li className="flex items-center space-x-3">
                     <svg
@@ -459,7 +495,10 @@ function App() {
                         d="M5 13l4 4L19 7"
                       ></path>
                     </svg>
-                    <span>3-Night Stay at a Disney Resort Hotel</span>
+                    <span>
+                      Winner can choose if they want Walt Disney World Resort
+                      tickets in Florida
+                    </span>
                   </li>
                   <li className="flex items-center space-x-3">
                     <svg
@@ -475,60 +514,9 @@ function App() {
                         d="M5 13l4 4L19 7"
                       ></path>
                     </svg>
-                    <span>$500 Disney Gift Card</span>
+                    <span>or Disneyland Park tickets in California</span>
                   </li>
                 </ul>
-              </div>
-
-              {/* Stay Connected */}
-              <div className="bg-rose-800 rounded-xl shadow-lg p-8 text-white">
-                <h2 className="text-2xl font-bold mb-4 flex items-center">
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    className="h-6 w-6 mr-2 text-rose-300"
-                    fill="none"
-                    viewBox="0 0 24 24"
-                    stroke="currentColor"
-                    strokeWidth="2"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      d="M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM12 11v9m-4-9v9m8-9v9M3 13h18"
-                    />
-                  </svg>
-                  Stay Connected
-                </h2>
-                <p className="mb-6">
-                  Follow us on Instagram to stay updated about the official
-                  rules and winner announcement! 📢
-                </p>
-                <button className="w-full bg-gradient-to-r from-pink-500 to-rose-500 hover:from-pink-600 hover:to-rose-600 text-white px-6 py-3 rounded-full text-lg font-semibold flex items-center justify-center transition-all duration-300 transform hover:scale-[1.02] shadow-lg"> {/* Rounded button */}
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    width="24"
-                    height="24"
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    stroke="currentColor"
-                    strokeWidth="2"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    className="feather feather-instagram mr-2"
-                  >
-                    <rect
-                      x="2"
-                      y="2"
-                      width="20"
-                      height="20"
-                      rx="5"
-                      ry="5"
-                    ></rect>
-                    <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"></path>
-                    <line x1="17.5" y1="6.5" x2="17.51" y2="6.5"></line>
-                  </svg>
-                  @studykey_official
-                </button>
               </div>
             </div>
           </div>
