@@ -538,11 +538,7 @@ function App() {
                 </li>
                 <li className="flex items-start space-x-3">
                   <span className="text-blue-600 font-bold">2.</span>
-                  <span>One entry per person ☝️</span>
-                </li>
-                <li className="flex items-start space-x-3">
-                  <span className="text-blue-600 font-bold">3.</span>
-                  <span>Contest ends on December 31, 2025 🗓️</span>
+                  <span>One entry per order number ☝️</span>
                 </li>
                 <li className="flex items-start space-x-3">
                   <span className="text-blue-600 font-bold">4.</span>
@@ -651,13 +647,15 @@ function App() {
                 Contact 📧
               </h3>
               <ul className="space-y-2 text-gray-400">
-                <li>Email: support@disneygiveaway.com</li>
-                <li>Phone: (555) 123-4567</li>
+                <li>Email: studykeyteam@gmail.com</li>
               </ul>
             </div>
           </div>
           <div className="mt-8 pt-8 border-t border-gray-800 text-center text-gray-400">
-            <p>&copy; 2025 Disney World Giveaway. All rights reserved. 🎉</p>
+            <p>
+              &copy; 2025 Disney World Giveaway | Studykey.ca | All rights
+              reserved. 🎉
+            </p>
           </div>
         </div>
       </footer>
