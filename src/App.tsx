@@ -263,16 +263,7 @@ function App() {
                     Fill out the form below to enter the giveaway. 👇
                   </p>
                 </div>
-                <div className="bg-blue-50 p-4 rounded-lg flex items-center shadow-inner">
-                  {" "}
-                  {/* Added shadow-inner */}
-                  <span className="text-blue-800 font-semibold mr-2">
-                    💡 Demo Form:
-                  </span>
-                  <span className="text-blue-600">
-                    Fill out all fields to proceed!
-                  </span>
-                </div>
+
                 <div className="space-y-4">
                   <div className="relative">
                     {isLoadingOrderIdValidation && (
