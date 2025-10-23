@@ -1,15 +1,36 @@
-import Logo from "./assets/pngwing.com.png"
+import { useState, FormEvent } from 'react';
+import axios from 'axios';
+// Assuming Logo is an actual image path
+import Logo from "./assets/pngwing.com.png";
+
+interface FormErrors {
+  orderId?: string;
+  fullName?: string;
+  email?: string;
+  phoneNumber?: string;
+  general?: string;
+}
+
+interface ApiError {
+  type: 'DUPLICATE_CLAIM' | 'FILE_TOO_LARGE' | 'INVALID_DATA' | 'SERVER_ERROR';
+  message: string;
+}
+
+interface ApiResponse {
+  success: boolean;
+  error?: ApiError;
+  data?: any;
+}
 
 function App() {
-
-  const [asin, setAsin] = useState<string | null>(null); // Simulates ASIN from API response
+  const [asin, setAsin] = useState<string | null>(null);
   const [orderId, setOrderId] = useState("");
   const [fullName, setFullName] = useState("");
   const [email, setEmail] = useState("");
   const [phoneNumber, setPhoneNumber] = useState("");
   const [errors, setErrors] = useState<FormErrors>({});
-  const [isLoadingOrderIdValidation, setIsLoadingOrderIdValidation] = useState(false); // Specific loading for order ID
-  const [isSubmittingForm, setIsSubmittingForm] = useState(false); // Specific loading for form submission
+  const [isLoadingOrderId, setIsLoadingOrderId] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const validateEmail = (email: string): boolean => {
     const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -21,7 +42,7 @@ function App() {
     return re.test(phone);
   };
 
-  const validatePage1 = (): boolean => {
+  const validateForm = (): boolean => {
     const newErrors: FormErrors = {};
 
     if (!orderId.trim()) {
@@ -49,171 +70,127 @@ function App() {
   };
 
   const handleOrderIdBlur = async () => {
-    // Only call API if orderId is not empty and hasn't been validated yet (asin is null)
     if (orderId.trim() && asin === null) {
-      setIsLoadingOrderIdValidation(true);
+      setIsLoadingOrderId(true);
       try {
-        // Replace with your actual API endpoint
         const response = await axios.post(
           "https://studykey-third-server.vercel.app/validate-order-id",
-          {
-            orderId,
-          }
+          { orderId }
         );
 
         if (response.data.valid) {
           setAsin(response.data.asins);
-          setErrors(prev => ({ ...prev, orderId: undefined })); // Clear order ID error if valid
+          setErrors(prev => ({ ...prev, orderId: undefined }));
         } else {
-          setAsin(null); // Ensure ASIN is null if validation fails
-          setErrors(prev => ({ ...prev, orderId: "Invalid Order ID. Please try again." })); // Update specific error
+          setAsin(null);
+          setErrors(prev => ({ ...prev, orderId: "Invalid Order ID. Please try again." }));
         }
       } catch (error) {
         console.error("Error validating order:", error);
-        setAsin(null); // Ensure ASIN is null on error
-        setErrors(prev => ({ ...prev, orderId: "Error validating order. Please try again." })); // Update specific error
+        setAsin(null);
+        setErrors(prev => ({ ...prev, orderId: "Error validating order. Please try again." }));
       } finally {
-        setIsLoadingOrderIdValidation(false);
+        setIsLoadingOrderId(false);
       }
     } else if (!orderId.trim()) {
       setErrors(prev => ({ ...prev, orderId: "Order ID is required" }));
-      setAsin(null); // Clear ASIN if order ID is empty
+      setAsin(null);
     }
   };
 
-  const handlePage2Submit = async (e: FormEvent) => {
+  const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
 
-    if (!validatePage1()) {
+    if (!validateForm()) {
       return;
     }
 
-    // Ensure ASIN is available before opening Amazon link and submitting form
     if (asin === null) {
-      // If asin is still null, it means order ID validation didn't complete or failed.
-      // This case should ideally be prevented by the disabled button, but as a fallback:
       setErrors(prev => ({ ...prev, orderId: "Please validate Order ID first." }));
       return;
     }
 
-    // Open Amazon review page in a new tab
-    window.open(`https://www.amazon.com/review/create-review?${asin}`, '_blank');
-
-    setIsSubmittingForm(true);
+    setIsSubmitting(true);
     try {
-      // Create a plain JavaScript object instead of FormData
-      const formDataToSend = {
+      const formData = {
         orderId,
-        asin, // ASIN is guaranteed to be string here
+        asin,
         name: fullName,
         email,
         phoneNumber,
       };
 
-      // Log the object contents for debugging purposes
-      console.log("JSON data being sent:", formDataToSend);
+      console.log("Submitting data:", formData);
 
       const { data } = await axios.post<ApiResponse>(
         "https://studykey-third-server.vercel.app/claim-ticket",
-        formDataToSend, // Send the plain JavaScript object
+        formData
       );
 
       if (!data.success) {
         switch (data.error?.type) {
           case "DUPLICATE_CLAIM":
-            showError(
-              "This order has already been claimed. Each order can only be claimed once."
-            );
+            setErrors(prev => ({ ...prev, general: "This order has already been claimed. Each order can only be claimed once." }));
             break;
           case "FILE_TOO_LARGE":
-            showError(
-              "The image file is too large. Please upload an image under 5MB."
-            );
+            setErrors(prev => ({ ...prev, general: "The image file is too large. Please upload an image under 5MB." }));
             break;
           case "INVALID_DATA":
-            showError("Please check your information and try again.");
+            setErrors(prev => ({ ...prev, general: "Please check your information and try again." }));
             break;
           case "SERVER_ERROR":
-            showError(
-              "Our servers are experiencing issues. Please try again later."
-            );
+            setErrors(prev => ({ ...prev, general: "Our servers are experiencing issues. Please try again later." }));
             break;
           default:
-            showError("An unexpected error occurred. Please try again.");
+            setErrors(prev => ({ ...prev, general: "An unexpected error occurred. Please try again." }));
         }
         return;
       }
 
-      // Success case
-      console.log("Your review and entry have been submitted successfully!");
-      // In a real application, you might show a success message in a modal or toast.
-
-      // Reset form fields after successful submission
+      // Success - reset form
+      console.log("Success! Form submitted.");
       setOrderId("");
       setFullName("");
       setEmail("");
       setPhoneNumber("");
       setAsin(null);
       setErrors({});
+      alert("Your entry has been submitted successfully!");
     } catch (error) {
-      console.error("Error submitting review:", error);
+      console.error("Error submitting:", error);
 
-      // Handle Axios specific errors for better user feedback
       if (axios.isAxiosError(error)) {
         if (error.response) {
-          // The request was made and the server responded with a status code that falls out of the range of 2xx
           const errorData = error.response.data as ApiResponse;
-          if (errorData.error) {
-            showError(errorData.error.message);
-          } else {
-            showError("Server error occurred. Please try again later.");
-          }
+          setErrors(prev => ({ ...prev, general: errorData.error?.message || "Server error occurred." }));
         } else if (error.request) {
-          // The request was made but no response was received (e.g., network error)
-          showError(
-            "No response from server. Please check your internet connection."
-          );
+          setErrors(prev => ({ ...prev, general: "No response from server. Please check your internet connection." }));
         } else {
-          // Something happened in setting up the request that triggered an Error
-          showError("Failed to submit claim. Please try again.");
+          setErrors(prev => ({ ...prev, general: "Failed to submit. Please try again." }));
         }
       } else {
-        // Handle any non-Axios errors
-        showError("An unexpected error occurred. Please try again.");
+        setErrors(prev => ({ ...prev, general: "An unexpected error occurred. Please try again." }));
       }
     } finally {
-      setIsSubmittingForm(false);
+      setIsSubmitting(false);
     }
-  }
-
-  // Function to show errors, ideally updating a UI component for user feedback
-  const showError = (message: string) => {
-    // For this example, we're setting it to the reviewScreenshot error field
-    // In a production app, you might have a dedicated state for general form errors
-    setErrors(prev => ({ ...prev, reviewScreenshot: message }));
   };
 
   return (
     <div className="min-h-screen bg-gray-50">
       {/* Hero Section */}
       <section className="relative min-h-[600px] bg-[url('https://images6.alphacoders.com/404/404692.jpg')] bg-cover bg-center rounded-b-xl overflow-hidden">
-        {" "}
-        {/* Added rounded-b-xl */}
         <div className="absolute inset-0 bg-gradient-to-b from-black/70 to-black/50"></div>
         <div className="relative container mx-auto px-4 py-16">
           <div className="flex flex-col items-center justify-center text-center text-white space-y-6">
-            <img src={Logo} className="w-50 h-auto rounded-lg shadow-lg"></img>{" "}
-            {/* Added styling to image */}
+            <img src={Logo} className="w-50 h-auto rounded-lg shadow-lg" alt="Logo" />
             <h1 className="text-5xl md:text-6xl font-bold tracking-tight">
               Win Disney World Tickets! ✨
             </h1>
             <p className="text-2xl md:text-3xl max-w-2xl">
-              Enter to win an unforgettable trip to the most magical place on
-              earth! 🏰
+              Enter to win an unforgettable trip to the most magical place on earth! 🏰
             </p>
             <button className="bg-blue-600 hover:bg-blue-700 text-white px-8 py-3 rounded-full text-lg font-semibold transition-all duration-300 transform hover:scale-105 shadow-lg">
-              {" "}
-              {/* Rounded button */}
               Limited Time Offer 🎟️
             </button>
           </div>
@@ -224,12 +201,11 @@ function App() {
       <section className="py-16 bg-gray-50">
         <div className="container mx-auto px-4">
           <div className="flex flex-col lg:flex-row gap-8 max-w-7xl mx-auto items-stretch">
-            {/* Entry Form Container */}
-            <div className="flex-1 relative min-h-[600px]">
-              {/* Page 1 Form */}
+            {/* Entry Form */}
+            <div className="flex-1">
               <form
-                onSubmit={handlePage2Submit}
-                className={`absolute inset-0 bg-white rounded-xl shadow-lg p-4 sm:p-8 space-y-6`}
+                onSubmit={handleSubmit}
+                className="bg-white rounded-xl shadow-lg p-4 sm:p-8 space-y-6"
               >
                 <div className="text-center space-y-2">
                   <h2 className="text-3xl font-bold text-gray-800">
@@ -238,14 +214,15 @@ function App() {
                   <p className="text-gray-600">
                     Fill out the form below to enter the giveaway. 👇
                   </p>
+                 
                 </div>
 
                 <div className="space-y-4">
                   <div className="relative">
-                    {isLoadingOrderIdValidation && (
+                    {isLoadingOrderId && (
                       <div className="absolute top-4 right-5 flex items-center justify-center">
                         <svg
-                          className="animate-spin -ml-1 mr-3 h-5 w-5 text-blue-500"
+                          className="animate-spin h-5 w-5 text-blue-500"
                           xmlns="http://www.w3.org/2000/svg"
                           fill="none"
                           viewBox="0 0 24 24"
@@ -271,21 +248,18 @@ function App() {
                       className={`w-full p-3 rounded-lg border ${
                         errors.orderId ? "border-red-500" : "border-gray-300"
                       } focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition-all shadow-sm`}
-                      placeholder={"Order Number*"}
+                      placeholder="Order Number*"
                       value={orderId}
                       onChange={(e) => {
                         setOrderId(e.target.value);
                         setErrors((prev) => ({ ...prev, orderId: undefined }));
-                        // Reset ASIN when orderId changes, so it needs re-validation
                         setAsin(null);
                       }}
                       required
-                      onBlur={handleOrderIdBlur} // Call validation/fetch on blur
+                      onBlur={handleOrderIdBlur}
                     />
                     {errors.orderId && (
-                      <p className="mt-1 text-sm text-red-500">
-                        {errors.orderId}
-                      </p>
+                      <p className="mt-1 text-sm text-red-500">{errors.orderId}</p>
                     )}
                   </div>
 
@@ -304,9 +278,7 @@ function App() {
                       required
                     />
                     {errors.fullName && (
-                      <p className="mt-1 text-sm text-red-500">
-                        {errors.fullName}
-                      </p>
+                      <p className="mt-1 text-sm text-red-500">{errors.fullName}</p>
                     )}
                   </div>
 
@@ -325,9 +297,7 @@ function App() {
                       required
                     />
                     {errors.email && (
-                      <p className="mt-1 text-sm text-red-500">
-                        {errors.email}
-                      </p>
+                      <p className="mt-1 text-sm text-red-500">{errors.email}</p>
                     )}
                   </div>
 
@@ -335,44 +305,31 @@ function App() {
                     <input
                       type="tel"
                       className={`w-full p-3 rounded-lg border ${
-                        errors.phoneNumber
-                          ? "border-red-500"
-                          : "border-gray-300"
+                        errors.phoneNumber ? "border-red-500" : "border-gray-300"
                       } focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition-all shadow-sm`}
                       placeholder="Phone Number*"
                       value={phoneNumber}
                       onChange={(e) => {
                         setPhoneNumber(e.target.value);
-                        setErrors((prev) => ({
-                          ...prev,
-                          phoneNumber: undefined,
-                        }));
+                        setErrors((prev) => ({ ...prev, phoneNumber: undefined }));
                       }}
                       required
                     />
                     {errors.phoneNumber && (
-                      <p className="mt-1 text-sm text-red-500">
-                        {errors.phoneNumber}
-                      </p>
+                      <p className="mt-1 text-sm text-red-500">{errors.phoneNumber}</p>
                     )}
                   </div>
 
                   <button
                     type="submit"
-                    // Disable if ASIN is null, or if either API call is in progress
-                    disabled={
-                      asin === null ||
-                      isLoadingOrderIdValidation ||
-                      isSubmittingForm
-                    }
+                    disabled={asin === null || isLoadingOrderId || isSubmitting}
                     className={`w-full bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-lg text-lg font-semibold transition-all duration-300 transform hover:scale-[1.02] shadow-md ${
-                      /* Added shadow-md */
-                      isLoadingOrderIdValidation || isSubmittingForm
+                      isLoadingOrderId || isSubmitting || asin === null
                         ? "opacity-50 cursor-not-allowed"
                         : ""
                     }`}
                   >
-                    {isSubmittingForm ? (
+                    {isSubmitting ? (
                       <span className="flex items-center justify-center">
                         <svg
                           className="animate-spin -ml-1 mr-3 h-5 w-5 text-white"
@@ -396,19 +353,18 @@ function App() {
                         </svg>
                         Submitting...
                       </span>
-                    ) : asin ? (
-                      "Share & Continue"
                     ) : (
-                      "Continue"
+                      "Submit Entry"
                     )}
                   </button>
-                  {errors.reviewScreenshot && (
+                  
+                  {errors.general && (
                     <p className="mt-1 text-sm text-red-500 text-center">
-                      {errors.reviewScreenshot}
+                      {errors.general}
                     </p>
                   )}
                 </div>
-              </div>
+              </form>
             </div>
 
             {/* Prize Details */}
@@ -431,8 +387,7 @@ function App() {
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7"></path>
                     </svg>
                     <span>
-                      Winner can choose if they want Walt Disney World Resort
-                      tickets in Florida
+                      Winner can choose if they want Walt Disney World Resort tickets in Florida
                     </span>
                   </li>
                   <li className="flex items-center space-x-3">
@@ -443,10 +398,6 @@ function App() {
                   </li>
                 </ul>
               </div>
-
-              
-
-             
             </div>
           </div>
         </div>
@@ -470,14 +421,12 @@ function App() {
                   <span>One entry per order number ☝️</span>
                 </li>
                 <li className="flex items-start space-x-3">
-                  <span className="text-blue-600 font-bold">4.</span>
+                  <span className="text-blue-600 font-bold">3.</span>
                   <span>Winner will be notified via email 📧</span>
                 </li>
                 <li className="flex items-start space-x-3">
-                  <span className="text-blue-600 font-bold">5.</span>
-                  <span>
-                    Prize must be claimed within 30 days of winning 🏆
-                  </span>
+                  <span className="text-blue-600 font-bold">4.</span>
+                  <span>Prize must be claimed within 30 days of winning 🏆</span>
                 </li>
               </ul>
             </div>
@@ -508,34 +457,24 @@ function App() {
                 About the Contest
               </h3>
               <p className="text-gray-400">
-                Experience the magic of Disney World with this exclusive
-                giveaway opportunity. ✨
+                Experience the magic of Disney World with this exclusive giveaway opportunity. ✨
               </p>
             </div>
             <div>
               <h3 className="text-xl font-bold mb-4 flex items-center"><svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2"><path strokeLinecap="round" strokeLinejoin="round" d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.102 1.101m-.757 4.898l-4 4v.001" /></svg>Quick Links</h3>
               <ul className="space-y-2 text-gray-400">
                 <li>
-                  <a
-                    href="#"
-                    className="hover:text-white transition-colors flex items-center"
-                  >
+                  <a href="#" className="hover:text-white transition-colors flex items-center">
                     <span className="mr-2">•</span>Terms & Conditions 📜
                   </a>
                 </li>
                 <li>
-                  <a
-                    href="#"
-                    className="hover:text-white transition-colors flex items-center"
-                  >
+                  <a href="#" className="hover:text-white transition-colors flex items-center">
                     <span className="mr-2">•</span>Privacy Policy 🔒
                   </a>
                 </li>
                 <li>
-                  <a
-                    href="#"
-                    className="hover:text-white transition-colors flex items-center"
-                  >
+                  <a href="#" className="hover:text-white transition-colors flex items-center">
                     <span className="mr-2">•</span>Contact Us 📞
                   </a>
                 </li>
@@ -550,10 +489,7 @@ function App() {
             </div>
           </div>
           <div className="mt-8 pt-8 border-t border-gray-800 text-center text-gray-400">
-            <p>
-              &copy; 2025 Disney World Giveaway | Studykey.ca | All rights
-              reserved. 🎉
-            </p>
+            <p>&copy; 2025 Disney World Giveaway | Studykey.ca | All rights reserved. 🎉</p>
           </div>
         </div>
       </footer>
