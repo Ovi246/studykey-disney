@@ -67,7 +67,7 @@ function App() {
       setIsLoadingOrderId(true);
       try {
         const response = await axios.post(
-          "http://localhost:5000/validate-order-id",
+          "https://studykey-third-server.vercel.app/validate-order-id",
           { orderId }
         );
 
@@ -116,7 +116,7 @@ function App() {
       console.log("Submitting data:", formData);
 
       const { data } = await axios.post<ApiResponse>(
-        "http://localhost:5000/claim-ticket",
+        "https://study/claim-ticket",
         formData
       );
 
