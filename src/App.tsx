@@ -116,7 +116,7 @@ function App() {
       console.log("Submitting data:", formData);
 
       const { data } = await axios.post<ApiResponse>(
-        "https://study/claim-ticket",
+        "https://studykey-third-server.vercel.app/claim-ticket",
         formData
       );
 
