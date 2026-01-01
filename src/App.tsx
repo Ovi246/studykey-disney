@@ -7,7 +7,7 @@ interface FormErrors {
   orderId?: string;
   fullName?: string;
   email?: string;
-  phoneNumber?: string;
+
   general?: string;
 }
 
@@ -27,7 +27,7 @@ function App() {
   const [orderId, setOrderId] = useState("");
   const [fullName, setFullName] = useState("");
   const [email, setEmail] = useState("");
-  const [phoneNumber, setPhoneNumber] = useState("");
+
   const [errors, setErrors] = useState<FormErrors>({});
   const [isLoadingOrderId, setIsLoadingOrderId] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -37,10 +37,7 @@ function App() {
     return re.test(email);
   };
 
-  const validatePhoneNumber = (phone: string): boolean => {
-    const re = /^\+?[\d\s-]{10,}$/;
-    return re.test(phone);
-  };
+
 
   const validateForm = (): boolean => {
     const newErrors: FormErrors = {};
@@ -59,11 +56,7 @@ function App() {
       newErrors.email = "Please enter a valid email address";
     }
 
-    if (!phoneNumber.trim()) {
-      newErrors.phoneNumber = "Phone number is required";
-    } else if (!validatePhoneNumber(phoneNumber)) {
-      newErrors.phoneNumber = "Please enter a valid phone number";
-    }
+    
 
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
@@ -74,7 +67,7 @@ function App() {
       setIsLoadingOrderId(true);
       try {
         const response = await axios.post(
-          "https://studykey-third-server.vercel.app/validate-order-id",
+          "http://localhost:5000/validate-order-id",
           { orderId }
         );
 
@@ -117,13 +110,13 @@ function App() {
         asin,
         name: fullName,
         email,
-        phoneNumber,
+       
       };
 
       console.log("Submitting data:", formData);
 
       const { data } = await axios.post<ApiResponse>(
-        "https://studykey-third-server.vercel.app/claim-ticket",
+        "http://localhost:5000/claim-ticket",
         formData
       );
 
@@ -152,7 +145,7 @@ function App() {
       setOrderId("");
       setFullName("");
       setEmail("");
-      setPhoneNumber("");
+    
       setAsin(null);
       setErrors({});
       alert("Your entry has been submitted successfully!");
@@ -301,24 +294,7 @@ function App() {
                     )}
                   </div>
 
-                  <div>
-                    <input
-                      type="tel"
-                      className={`w-full p-3 rounded-lg border ${
-                        errors.phoneNumber ? "border-red-500" : "border-gray-300"
-                      } focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition-all shadow-sm`}
-                      placeholder="Phone Number*"
-                      value={phoneNumber}
-                      onChange={(e) => {
-                        setPhoneNumber(e.target.value);
-                        setErrors((prev) => ({ ...prev, phoneNumber: undefined }));
-                      }}
-                      required
-                    />
-                    {errors.phoneNumber && (
-                      <p className="mt-1 text-sm text-red-500">{errors.phoneNumber}</p>
-                    )}
-                  </div>
+                 
 
                   <button
                     type="submit"
